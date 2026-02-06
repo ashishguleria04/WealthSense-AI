@@ -9,7 +9,7 @@ import { TaxOptimizer } from "@/components/tax-optimizer";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
-import { Send, Wallet, PieChart, TrendingUp } from "lucide-react";
+import { Send, Wallet, PieChart, TrendingUp, AlertCircle } from "lucide-react";
 import { useState } from "react";
 import { cn } from "@/lib/utils";
 import { motion } from "framer-motion";
@@ -62,6 +62,12 @@ function ChatInterface() {
         { role: 'assistant', content: responseText, component: responseComponent }
     ]);
   };
+
+  const { state: currentState } = useAiState();
+  const totalSpent = currentState.transactions.reduce((acc, curr) => acc + curr.amount, 0);
+  const budgetLimit = (currentState.monthlyIncome || 0) * 0.5;
+  const percentage = budgetLimit > 0 ? Math.min((totalSpent / budgetLimit) * 100, 100) : 0;
+  const isDanger = percentage > 85;
 
   return (
     <div className="flex h-screen bg-background overflow-hidden">
@@ -147,6 +153,13 @@ function ChatInterface() {
 
           {/* Input Area */}
           <div className="p-4 border-t border-border bg-background">
+              <div className="max-w-3xl mx-auto relative flex items-center gap-2">
+                {isDanger && (
+                    <div className="absolute -top-10 left-0 right-0 flex items-start gap-2 text-xs text-rose-400 bg-rose-500/10 p-2 rounded-md">
+                        <AlertCircle size={14} className="mt-0.5" />
+                        <p>You&apos;re approaching your limit! Slow down on &quot;Eating Out&quot;.</p>
+                    </div>
+                )}
                   <input 
                     className="flex-1 bg-secondary/50 border border-border rounded-full px-6 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 transition-all placeholder:text-muted-foreground"
                     placeholder="Ask about your budget, SIPs, or taxes..."

@@ -133,7 +133,7 @@ export function SIPCalculator() {
                     borderRadius: "8px"
                 }}
                 itemStyle={{ color: "hsl(var(--foreground))" }}
-                formatter={(value: number) => [`₹${value.toLocaleString()}`, ""]}
+                formatter={(value: any) => [`₹${value.toLocaleString()}`, ""]}
                 labelFormatter={(label) => `Year ${label}`}
               />
               <Area
